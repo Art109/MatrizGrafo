@@ -11,8 +11,13 @@ ifstream entrada;
 
 void matrizAdj(int vertice){
 	
+	entrada.open("entrada.txt");
+	string text;
+	int liga1, liga2;
+	
 	int ** matrizAdjacencia;
  	int V = vertice;
+ 	
  	
  	matrizAdjacencia= new int*[V];
  	
@@ -23,11 +28,17 @@ void matrizAdj(int vertice){
 	
 	for(int i = 0 ; i < V ; i++){
 		for(int j = 0 ; j < V ; j++){
-			matrizAdjacencia[i][j] = 0;	
-				
-		}
-			
+			matrizAdjacencia[i][j] = 0;					
+		}		
 	}
+	
+	for(int i = 0 ; getline(entrada, text) ; i++ ){
+		if(i > 2){
+			
+		}
+	} 
+	
+	entrada.close();
 		
 	for(int i = 0 ; i < V ; i++){
 		for(int j = 0 ; j < V ; j++){
@@ -44,6 +55,7 @@ void matrizInc(int vertice, int arestas){
 	int C = vertice;
 	int L = arestas;
 	
+	entrada.open("entrada.txt");
 	matrizInc = new int*[L];
 	
 	for(int i = 0 ; i < L ; i++){
@@ -52,11 +64,12 @@ void matrizInc(int vertice, int arestas){
 	
 	for( int i = 0; i < L ; i++){
 		for(int j = 0 ; j < C ; j++){
-			matrizInc[i][j] = 0;
-			
+			matrizInc[i][j] = 0;	
 		}
 	}
 	
+	
+	entrada.close();
 	for( int i = 0; i < L ; i++){
 		for(int j = 0 ; j < C ; j++){
 			cout << matrizInc[i][j] << " ";
@@ -71,8 +84,8 @@ int getVertice(){
 	int vertice;
 	entrada.seekg(0);
 	getline(entrada,text);
-	vertice = stoi(text.substr(0, text.find(",")));
-	entrada.close();
+	vertice = stoi(text);
+	entrada.close()
 	return vertice;
 	
 }
@@ -81,23 +94,21 @@ int getAresta(){
 	entrada.open("entrada.txt");
 	string text;
 	int arestas;
-	entrada.seekg(0);
 	getline(entrada,text);
-	arestas = stoi(text.substr( text.find(",") + 1, text.size()));
-	entrada.close();
+	arestas = stoi(text);
+	entrada.close()
 	return arestas;
 	
 }
 
  int main(){
  	
+ 	
  	int vertice = getVertice();
  	int arestas = getAresta();
  	
-	cout << vertice << endl;
-	cout << arestas <<endl;
 
-	/* cout << "Matriz de Adjacencia" << endl;
+	cout << "Matriz de Adjacencia" << endl;
  	matrizAdj(vertice);
  	
 	cout << endl;
@@ -105,7 +116,7 @@ int getAresta(){
  	
 	cout << "Matriz de Incidencia" << endl;
  	matrizInc(vertice, arestas);
-	*/	
+		
 	
 
 
