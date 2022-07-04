@@ -6,28 +6,69 @@
 using namespace std;
 
 ifstream entrada;
-ifstream entrada2;
 
 
+int encontraRaio( int ** matriz, int tam){
+
+	int ** matriz = matriz;
+	int menor;
+	
+	menor = matriz[0][0];
+	for(int i = 0 ; i < tam; i++){
+		for ( int j = 0; j < tam ; j++){
+			if(matriz[i][j] == 0)
+				continue;
+			if(matriz[i][j] < menor){
+				menor = matriz[i][j];
+			}	
+		}
+		
+	}
+
+	return menor ; 
+
+}
+
+int * encontraCentro( int ** matriz, int tam){
+
+	int ** matriz = matriz;
+	int raio;
+	int * centro;
+
+	centro = new int[tam];
+	int index = 0;
+
+	raio = encontraRaio(matriz,tam);
+	for(int i = 0 ; i < tam; i++){
+		for ( int j = 0; j < tam ; j++){
+			if(matriz[i][j] == raio){
+				centro[index] = i; 
+				index++;
+			}
+		}
+		
+	}
+
+	return centro ; 
+
+}
 void matrizPeso(){
 
 	//Inicialização de Matrizes
 	int ** matrizPeso;
-	int ** matrizMaxMin;
 
 	//Inicializando e pegando a quantidade dos vertices
 
-	entrada2.open("entrada2.txt");
+	entrada.open("entrada2.txt");
 	string text;
 	int V;
-	entrada2.seekg(0);
-	getline(entrada2,text);
+	entrada.seekg(0);
+	getline(entrada,text);
 	V = stoi(text);
-	entrada2.close();
+	entrada.close();
 
 	//Inicialização e Preenchimento das matrizes com 0
 	matrizPeso = new int*[V];
-	matrizMaxMin = new int*[V];
  	
  	
  	for(int i = 0 ; i < V ; i++ ){
@@ -40,53 +81,28 @@ void matrizPeso(){
 		}
 	}
 
-	for(int i = 0 ; i < V ; i++ ){
- 		matrizMaxMin[i] = new int[3];
-	}
 	
-	for(int i = 0 ; i < V ; i++){
-		for(int j = 0 ; j < 3 ; j++){
-			matrizMaxMin[i][j] = 0;					
-		}
-	}
 	//Preenchimento das Matrizes
-	entrada2.open("entrada2.txt");
+	entrada.open("entrada2.txt");
+	entrada.seekg(0);
+	getline(entrada,text);
 	for(int i = 0 ; i < V ; i++){
-		for(int j = 0 ; getline(entrada2,text); j++){
-			if(j > 0){
-				cout << j << endl;
-				
-
-				if(j > V){
-					matrizMaxMin[i][j - V - 1 ] = stoi(text);
-					cout<< "oi" << endl;
-				}
-				else{
-					matrizPeso[i][j-1] = stoi(text);
-				}
-
-				if(j == (V + 3)){
-					break;
-				}
-			
-			}					
+		for(int j = 0 ; j < V ; j++){
+			getline(entrada,text);	
+			matrizPeso[i][j] = stoi(text);			
 		}
 	}
-	entrada2.close();
-
+	entrada.close();
+	
 
 	//Print Matrizes
 	for( int i = 0; i < V ; i++){
 		for(int j = 0 ; j < V ; j++){
 			cout << matrizPeso[i][j] << " ";
 		}
-		cout << " " ;
-		for(int j = 0 ; j < 3 ; j++){
-			cout << matrizMaxMin[i][j] << " ";
-		}
 		cout << endl;
 	}
-		cout << endl;
+		
 }
 	
 
@@ -150,7 +166,8 @@ void matrizInc(int vertice, int arestas){
 	
 	for( int i = 0; i < L ; i++){
 		for(int j = 0 ; j < C ; j++){
-			matrizInc[i][j] = 0;	
+			matrizInc[i][j] = 0;
+		
 		}
 	}
 	
