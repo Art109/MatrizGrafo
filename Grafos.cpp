@@ -137,11 +137,11 @@ int encotrarMediana(int matriz[9][9]) {
 
 	//Lendo toda a matriz
 	for (int i = 0; i < 9; i++) {
-		// soma é resetada toda linha para assim fazer o somatorio das colunas de cada linha
+		// soma é resetada toda linha para assim fazer o somatorio das colunas de cada lin
 		soma = 0;
 		for (int j = 0;j < 9; j++) {		
 			soma += matriz[i][j];
-			if (soma > aux) {
+			if (soma < aux) {
 				aux = soma;
 				mediana = i + 1;
 			}
@@ -154,7 +154,7 @@ int encotrarMediana(int matriz[9][9]) {
 void matrizPeso(){
 
 	
-	//Inicialização de Matrizes ePreenchendo matriz
+	//Inicialização da Matrize Preenchida
 	int  matrizPeso[9][9] = {
 		{0, 12, 20, 15, 28, 37, 25, 38, 46},
 		{12, 0, 8, 27, 16, 25, 37, 32, 43},
@@ -215,57 +215,87 @@ void matrizPeso(){
 	
 
 
-bool isCompleto(int matriz[][], int v) {
+bool isCompleto(int ** matriz, int v, int a) {
+	//Verifica se o numero de arestas é igual ao valor equivalente para o grafo ser completo
+	if (a == ((v - 1) * v) / 2) {
+		//Verifica se existe um zero na matriz da adjacencia não coferindo a diagonal principal 
+		for (int i = 0; i < v; i++) {
+			for (int j = 0; j < v; j++) {
+				if (i != j && matriz[i][j] == 0)
+					return false;
+			}
+		}
+		return true;
+	}
+	else
+		return false;
+}
 
-	for (int i = 0; i < v; i++) {
-		for (int j = 0; j < v; j++) {
-			if (i != j && matriz[i][j] != 1)
+
+bool isConexo(int ** matriz, int v,int a) {
+	//Verifica se o numero de aresta é pelo menos igual a n - 1 ou seja o minimo de ligações para ser conexo
+	bool ctrl = false;
+	if (a >= v - 1) {
+		//Lê toda a matriz
+		for (int i = 0; i < v; i++) {
+			for (int j = 0; j < v; j++) {
+				//Caso ele encontre 1 vai para o proximo vertice , caso não encontre nenhum 1 retorna false indicando que o grafo não é conexo
+				if (matriz[i][i] == 0 || matriz[i][j] == 1) {
+					ctrl = true;
+					break;
+				}
+				ctrl = false;
+			}
+			if (!ctrl)
 				return false;
 		}
+		return true;
 	}
-	return true;
 }
 
-bool isConexo(int matriz[][], int v) {
-	//Lê toda a matriz
-	for (int i = 0; i < v; i++) {
-		for (int j = 0; j < v; j++) {
-			//Caso ele encontre 1 vai para o proximo vertice , caso não encontre nenhum 1 retorna false indicando que o grafo não é conexo
-			if (matriz[i][j] = 1)
-				break;
-			else if (matriz[i][v - 1] == 0)
-				return false
-		}
-	}
-	return true;
-}
-
-bool isRegular(int matriz[][], int v, int a) {
+bool isRegular(int ** matriz, int v) {
 	
 	int soma = 0, aux = 0;
 	//Lê toda a matriz
 	for (int i = 0; i < v; i++) {
 		soma = 0;
-		for (int j = 0; j < a; j++) {
-			//Atribui o grau do primeiro vertice a variavel auxiliar e a compara com o grau dos outro vertices caso algum deles seja diferente ele retorna false caso sejam todos igual retorna true 
-			soma += matriz[i][j]
-			if (aux == 0)
-				aux = soma;
-			else if (soma != aux)
-				return false;
+		for (int j = 0; j < v; j++) {
+			
+			soma += matriz[i][j];
 		}
+		//Atribui o grau do primeiro vertice a variavel auxiliar e a compara com o grau dos outro vertices caso algum deles seja diferente ele retorna false caso sejam todos igual retorna true 
+		if (aux == 0)
+			aux = soma;
+		else if (soma != aux)
+			return false;
 	}
 	return true;
 }
 
-bool isMultigrafo(int matriz[][], int v, int a) {
 
+//auxiliar para a função do multigrafo
+bool equals_vetor(int* vetor1, int* vetor2, int tamanho) {
+	int i, cont = 1;
+	for (i = 0; i < tamanho; i++) {
+		if (vetor1[i] != vetor2[i]) {
+			return false;
+		}
+	}
 
-	//Lê toda a matriz de incidencia e caso encontre algum vertice que possui mais de uma ligação ligando em um mesmo vertice retorna true caso não continua a procurar até não achar e retorna true
-	for (int i = 0; i < v; i++) {
-		for (int j = 0; j < a; j++) {
-			//Atribui o grau do primeiro vertice a variavel auxiliar e a compara com o grau dos outro vertices caso algum deles seja diferente ele retorna false caso sejam todos igual retorna true 
-			if (matriz[i][j] > 1) {
+	return true;
+}
+
+bool isMultigrafo(int** matriz, int v, int a) {
+	//Verifica se existe alguma aresta igual a outra caso sim o grafo é um multigrafo
+
+	//Lê toda a matriz de incidencia e caso encontre alguma aresta igual a outra 
+	int* vetor_teste = new int[a];
+
+	for (int i = 0; i < a; i++) {
+		vetor_teste = matriz[i];
+
+		for (int j = i + 1; j < a; j++) {
+			if (equals_vetor(vetor_teste, matriz[j], v)) {
 				return true;
 			}
 		}
@@ -273,29 +303,60 @@ bool isMultigrafo(int matriz[][], int v, int a) {
 	return false;
 }
 
-bool isPseudografo(int matriz[][], int v) {
+
+bool isPseudografo(int ** matriz, int v) {
 
 
-	//Lê apenas a diagonal principal da matriz de adjacencia e caso exista um 1 retorna false caso não true
+	//Lê apenas a diagonal principal da matriz de adjacencia e caso exista um 1 retorna true caso não false
 	for (int i = 0; i < v; i++) { 
 		if (matriz[i][i] == 1) {
-			return false;
+			return true;
 		}
 
 	}
-	return true;
+	return false;
+}
+//Verifica o diagonal principal da matriz de adjacencia e caso todos os valores forem 1 ele será reflexivo
+bool isReflexivo(int** matriz, int v) {
+	if (v > 0) {
+		for (int i = 0; i < v; i++) {
+			if (matriz[i][i] != 1) {
+				return false;
+			}
+		}
+		return true;
+	}
+	return false;
 }
 
-bool isSimples(int matriz[][], int v,int a) {
+bool isSimples(int ** matrizADJ,int** matrizINC, int v,int a) {
 
 
-	if (!isPseudografo(matriz, v) && !isMultigrafo(matriz, v, a))
+	if (!isPseudografo(matrizADJ, v) /* && !isMultigrafo(matrizINC, v, a)*/)
 		return true;
 	else
 		return false;
 }
 
-void matrizAdj(int vertice){
+bool isTrivial(int v, int a) {
+	//Caso só exista um 1 vertice e 0 arestas ele será trivial
+	if (v == 1 && a == 0) {
+		return true;
+	}
+	else
+		return false;
+
+}
+
+bool isNulo(int v,int a) {
+	if (v == 0)
+		return true;
+	else
+		return false;
+}
+
+
+int ** matrizAdj(int vertice){
 	
 	entrada.open("entrada.txt");
 	string text;
@@ -336,41 +397,49 @@ void matrizAdj(int vertice){
 		cout << endl;
 	}	
 
-	if (isCompleto(matrizAdj,V))
-		cout << "O grafo e' Completo"<< endl;
-	
+	return matrizAdjacencia;
 }
 
 
 
-void matrizInc(int vertice, int arestas){
+int ** matrizInc(int vertice, int arestas){
 	
-	int ** matrizInc;
-	int C = vertice;
-	int L = arestas;
-	
-	entrada.open("entrada.txt");
-	matrizInc = new int*[L];
-	
+	int ** matrizIncidencia;
+	int L = vertice;
+	int C = arestas;
+	string text;
+	int liga1, liga2;
+	 
+	matrizIncidencia = new int*[L];
 	for(int i = 0 ; i < L ; i++){
-		matrizInc[i] = new int[C];
+		matrizIncidencia[i] = new int[C];
 	}
-	
-	for( int i = 0; i < L ; i++){
-		for(int j = 0 ; j < C ; j++){
-			matrizInc[i][j] = 0;
-		
+
+	for (int i = 0; i < L; i++) {
+		for (int j = 0; j < C; j++) {
+			matrizIncidencia[i][j] = 0;
 		}
 	}
 	
-	
+	entrada.open("entrada.txt");
+	for (int i = 0; getline(entrada, text); i++) {
+		if (i > 1) {
+			liga1 = stoi(text.substr(0, text.find(";"))) - 1;
+			liga2 = stoi(text.substr(text.find(";") + 1, text.size())) - 1;
+			matrizIncidencia[liga1][i - 2] += 1;
+			matrizIncidencia[liga2][i - 2] += 1;
+		}
+	}
 	entrada.close();
+
 	for( int i = 0; i < L ; i++){
 		for(int j = 0 ; j < C ; j++){
-			cout << matrizInc[i][j] << " ";
+			cout << matrizIncidencia[i][j] << " ";
 		}
 		cout << endl;
 	}
+
+	return matrizIncidencia;
 }
 	
 int getVertice(){
@@ -389,10 +458,14 @@ int getAresta(){
 	entrada.open("entrada.txt");
 	string text;
 	int arestas;
-	getline(entrada,text);
-	arestas = stoi(text);
-	entrada.close();
-	return arestas;
+	for (int i = 0;getline(entrada, text);i++) {
+		if (i == 1) {
+			arestas = stoi(text);
+			entrada.close();
+			return arestas;
+		}
+	}
+	
 	
 }
 
@@ -401,16 +474,49 @@ int getAresta(){
  	
  	int vertice = getVertice();
  	int arestas = getAresta();
- 	
+	cout << "Matriz de Adjacencia" << endl;
+	int** matrizAdjacencia = matrizAdj(vertice);
+	cout << endl;
+	cout << endl;
+	cout << "Matriz de Incidencia" << endl ;
+	int** matrizIncidencia = matrizInc(vertice, arestas);
 
-	//cout << "Matriz de Adjacencia" << endl;
- 	//matrizAdj(vertice);
- 	
-	cout << endl;
-	cout << endl;
- 	
-	//cout << "Matriz de Incidencia" << endl;
- 	//matrizInc(vertice, arestas);
+	//cout << isRegular(matrizAdjacencia, vertice, arestas) << endl;
+	
+	if (!isNulo(vertice, arestas)) {
+		
+		if (!isTrivial(vertice, arestas)) {
+			
+			if (isSimples(matrizAdjacencia, matrizIncidencia, vertice, arestas)) {
+				
+				cout << "O grafo e' simples" << endl;
+				if (isCompleto(matrizAdjacencia, vertice, arestas))
+					cout << "O grafo e' completo" << endl;
+				if (isRegular(matrizAdjacencia, vertice))
+					cout << "O grafo e' regular" << endl;
+				if (isConexo(matrizAdjacencia, vertice, arestas))
+					cout << "O grafo e' conexo" << endl;
+			}
+			else if (isPseudografo(matrizAdjacencia, vertice)) {
+				cout << "o grafo e' um pseudografo" << endl;
+				if (isReflexivo(matrizAdjacencia, vertice))
+					cout << "O grafo e' reflexivo" << endl;
+				if (isRegular(matrizAdjacencia, vertice))
+					cout << "O grafo e' regular" << endl;
+				if (isConexo(matrizAdjacencia, vertice, arestas))
+					cout << "O grafo e' conexo" << endl;
+
+			}
+			else
+				cout << "Nao possivel classificar o grafo" << endl;
+		}
+		else {
+			cout << "O grafo e' trivial" << endl;
+		}
+	}
+	else {
+		cout << "O grafo e' nulo" << endl;
+	}
 	
 	//matrizPeso();
 	
